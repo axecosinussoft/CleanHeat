@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clean Heat Controller — Руководство по функциям</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --card: #161b22;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --success: #3fb950;
+  --warning: #d29922;
+  --danger: #f85149;
+  --purple: #a371f7;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  padding: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+h1 { font-size: 2rem; margin-bottom: 8px; color: var(--accent); }
+h2 { font-size: 1.4rem; margin: 32px 0 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+h3 { font-size: 1.1rem; margin: 20px 0 12px; color: var(--success); }
+.subtitle { color: var(--muted); margin-bottom: 32px; }
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  margin: 16px 0;
+}
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+}
+.feature {
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 16px;
+}
+.feature-title {
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.feature-desc { font-size: 0.9rem; color: var(--muted); }
+.mode-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+}
+.mode-table th, .mode-table td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.mode-table th { color: var(--accent); font-weight: 600; }
+.mode-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.mode-off { background: rgba(139, 148, 158, 0.2); color: #8b949e; }
+.mode-1 { background: rgba(0, 255, 126, 0.2); color: #00ff7e; }
+.mode-2 { background: rgba(204, 255, 0, 0.2); color: #ccff00; }
+.mode-3 { background: rgba(255, 0, 0, 0.2); color: #ff6b6b; }
+.mode-max { background: rgba(255, 0, 168, 0.2); color: #ff00a8; }
+.click-action {
+  display: flex;
+  gap: 16px;
+  margin: 16px 0;
+  padding: 16px;
+  background: var(--bg);
+  border-radius: 8px;
+  align-items: flex-start;
+}
+.click-icon {
+  width: 50px;
+  height: 50px;
+  flex-shrink: 0;
+}
+.click-content { flex: 1; }
+.click-name { font-weight: 600; margin-bottom: 4px; }
+.click-desc { font-size: 0.9rem; color: var(--muted); }
+.param-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.param-row:last-child { border-bottom: none; }
+.param-name { font-weight: 500; }
+.param-value { color: var(--success); font-family: monospace; }
+.led-mode {
+  display: flex;
+  gap: 16px;
+  margin: 12px 0;
+  padding: 16px;
+  background: var(--bg);
+  border-radius: 8px;
+  align-items: center;
+}
+.led-preview {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.led-off { background: #2d3748; border: 2px solid #4a5568; }
+.led-temp { background: linear-gradient(135deg, #00ff7e, #ccff00, #ff0000); }
+.led-flow { background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red); animation: spin 3s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.api-endpoint {
+  background: var(--bg);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 8px 0;
+  font-family: monospace;
+  font-size: 0.9rem;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.api-method { color: var(--success); font-weight: 600; }
+.api-path { color: var(--accent); }
+.api-desc { color: var(--muted); font-size: 0.85rem; width: 100%; }
+.serial-cmd {
+  background: var(--bg);
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-family: monospace;
+  margin: 4px 0;
+}
+.warning-box {
+  background: rgba(210, 153, 34, 0.1);
+  border-left: 4px solid var(--warning);
+  padding: 16px;
+  border-radius: 0 8px 8px 0;
+  margin: 16px 0;
+}
+.info-box {
+  background: rgba(88, 166, 255, 0.1);
+  border-left: 4px solid var(--accent);
+  padding: 16px;
+  border-radius: 0 8px 8px 0;
+  margin: 16px 0;
+}
+.display-diagram {
+  background: #000;
+  border: 2px solid #333;
+  border-radius: 4px;
+  padding: 8px;
+  width: fit-content;
+  margin: 16px auto;
+}
+svg text { font-family: monospace; }
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+}
+.tab {
+  padding: 8px 16px;
+  border-radius: 6px 6px 0 0;
+  cursor: pointer;
+  background: transparent;
+  color: var(--muted);
+  border: none;
+  font-size: 0.9rem;
+}
+.tab.active {
+  background: var(--card);
+  color: var(--text);
+}
+</style>
+</head>
+<body>
+
+<h1>Clean Heat Controller</h1>
+<p class="subtitle">Руководство по функциям и управлению • Версия прошивки 1.0.63</p>
+
+<h2>Обзор устройства</h2>
+<div class="card">
+<p>Clean Heat Controller — температурный контроллер на базе ESP32-C3 с PID-регулированием, веб-интерфейсом и RGB индикацией. Устройство предназначено для точного управления нагревательными элементами.</p>
+
+<div class="feature-grid" style="margin-top: 20px;">
+  <div class="feature">
+    <div class="feature-title">
+      <svg width="20" height="20" viewBox="0 0 20 20"><path d="M10 2 L10 18 M6 6 L10 2 L14 6" stroke="#58a6ff" stroke-width="2" fill="none"/></svg>
+      PID-регулирование
+    </div>
+    <div class="feature-desc">Адаптивный алгоритм с агрессивным и консервативным режимами для точного поддержания температуры</div>
+  </div>
+  <div class="feature">
+    <div class="feature-title">
+      <svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8" stroke="#58a6ff" stroke-width="2" fill="none"/><path d="M10 6 L10 10 L13 13" stroke="#58a6ff" stroke-width="2" fill="none"/></svg>
+      WiFi управление
+    </div>
+    <div class="feature-desc">Встроенная точка доступа с captive portal и веб-интерфейсом</div>
+  </div>
+  <div class="feature">
+    <div class="feature-title">
+      <svg width="20" height="20" viewBox="0 0 20 20"><rect x="4" y="8" width="12" height="8" rx="1" stroke="#58a6ff" stroke-width="2" fill="none"/><path d="M7 8 L7 5 L13 5 L13 8" stroke="#58a6ff" stroke-width="2" fill="none"/></svg>
+      Мониторинг АКБ
+    </div>
+    <div class="feature-desc">Отслеживание напряжения и процента заряда 2S Li-ion аккумулятора</div>
+  </div>
+  <div class="feature">
+    <div class="feature-title">
+      <svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="6" fill="#3fb950"/></svg>
+      RGB индикация
+    </div>
+    <div class="feature-desc">Цветовая индикация режимов, температуры и состояния</div>
+  </div>
+</div>
+</div>
+
+<h2>Управление кнопкой</h2>
+<div class="card">
+
+<div class="click-action">
+  <svg class="click-icon" viewBox="0 0 50 50">
+    <circle cx="25" cy="25" r="18" fill="#4a5568" stroke="#8b949e" stroke-width="2"/>
+    <circle cx="25" cy="25" r="10" fill="#2d3748"/>
+    <text x="25" y="48" text-anchor="middle" fill="#8b949e" font-size="8">×1</text>
+  </svg>
+  <div class="click-content">
+    <div class="click-name">Одиночное нажатие</div>
+    <div class="click-desc">Переключение температурного режима: OFF → Mode 1 → Mode 2 → Mode 3 → MAX → OFF. При пользовательском режиме (PWM или Custom Temp) — переход в OFF.</div>
+  </div>
+</div>
+
+<div class="click-action">
+  <svg class="click-icon" viewBox="0 0 50 50">
+    <circle cx="18" cy="25" r="12" fill="#4a5568" stroke="#8b949e" stroke-width="2"/>
+    <circle cx="18" cy="25" r="6" fill="#2d3748"/>
+    <circle cx="35" cy="25" r="12" fill="#4a5568" stroke="#8b949e" stroke-width="2"/>
+    <circle cx="35" cy="25" r="6" fill="#2d3748"/>
+    <text x="25" y="48" text-anchor="middle" fill="#8b949e" font-size="8">×2</text>
+  </svg>
+  <div class="click-content">
+    <div class="click-name">Двойное нажатие</div>
+    <div class="click-desc">Переключение режима LED: OFF → TEMP → FLOW → OFF. На экране появляется уведомление о текущем режиме.</div>
+  </div>
+</div>
+
+<div class="click-action">
+  <svg class="click-icon" viewBox="0 0 50 50">
+    <circle cx="12" cy="25" r="9" fill="#4a5568" stroke="#8b949e" stroke-width="2"/>
+    <circle cx="12" cy="25" r="4" fill="#2d3748"/>
+    <circle cx="27" cy="25" r="9" fill="#4a5568" stroke="#8b949e" stroke-width="2"/>
+    <circle cx="27" cy="25" r="4" fill="#2d3748"/>
+    <circle cx="42" cy="25" r="9" fill="#4a5568" stroke="#8b949e" stroke-width="2"/>
+    <circle cx="42" cy="25" r="4" fill="#2d3748"/>
+    <text x="25" y="48" text-anchor="middle" fill="#8b949e" font-size="8">×3</text>
+  </svg>
+  <div class="click-content">
+    <div class="click-name">Тройное нажатие</div>
+    <div class="click-desc">Управление таймером: пауза таймера (если запущен) или сброс (если на паузе). Таймер мигает при действии.</div>
+  </div>
+</div>
+
+<div class="click-action">
+  <svg class="click-icon" viewBox="0 0 50 50">
+    <circle cx="25" cy="25" r="18" fill="#553c9a" stroke="#9f7aea" stroke-width="2"/>
+    <circle cx="25" cy="25" r="10" fill="#44337a"/>
+    <rect x="10" y="38" width="30" height="4" rx="2" fill="#9f7aea"/>
+    <text x="25" y="48" text-anchor="middle" fill="#9f7aea" font-size="7">1 сек</text>
+  </svg>
+  <div class="click-content">
+    <div class="click-name">Долгое нажатие (1 сек)</div>
+    <div class="click-desc">Переход в режим ожидания сна. Экран инвертируется, полоска внизу анимированно уменьшается. Нагрев отключается, LED выключается. Если не нажать кнопку в течение 5 секунд — устройство уйдёт в глубокий сон.</div>
+  </div>
+</div>
+
+</div>
+
+<h2>Температурные режимы</h2>
+<div class="card">
+<table class="mode-table">
+  <tr>
+    <th>Режим</th>
+    <th>Температура</th>
+    <th>Описание</th>
+  </tr>
+  <tr>
+    <td><span class="mode-badge mode-off">OFF</span></td>
+    <td>—</td>
+    <td>Нагрев выключен, PWM = 0%</td>
+  </tr>
+  <tr>
+    <td><span class="mode-badge mode-1">Mode 1</span></td>
+    <td>210°C *</td>
+    <td>Первый предустановленный режим</td>
+  </tr>
+  <tr>
+    <td><span class="mode-badge mode-2">Mode 2</span></td>
+    <td>220°C *</td>
+    <td>Второй предустановленный режим</td>
+  </tr>
+  <tr>
+    <td><span class="mode-badge mode-3">Mode 3</span></td>
+    <td>240°C *</td>
+    <td>Третий предустановленный режим</td>
+  </tr>
+  <tr>
+    <td><span class="mode-badge mode-max">MAX</span></td>
+    <td>100% PWM</td>
+    <td>Максимальная мощность без регулирования</td>
+  </tr>
+</table>
+
+<div class="info-box">
+<strong>* Настраиваемые значения</strong><br>
+Температуры режимов Mode 1, Mode 2, Mode 3 можно изменить через веб-интерфейс. Значения сохраняются в энергонезависимой памяти. Диапазон: 50–350°C. По умолчанию: 210 / 220 / 240°C.
+</div>
+
+<h3>Дополнительные режимы (через веб-интерфейс)</h3>
+<table class="mode-table">
+  <tr>
+    <th>Режим</th>
+    <th>Описание</th>
+  </tr>
+  <tr>
+    <td><span class="mode-badge" style="background: rgba(163, 113, 247, 0.2); color: #a371f7;">Custom Temp</span></td>
+    <td>Произвольная температура с PID-регулированием (кнопки ±1°C и ±5°C)</td>
+  </tr>
+  <tr>
+    <td><span class="mode-badge" style="background: rgba(255, 146, 43, 0.2); color: #ff922b;">Custom PWM</span></td>
+    <td>Прямое управление мощностью 0–100% без PID-регулирования</td>
+  </tr>
+</table>
+</div>
+
+<h2>Дисплей</h2>
+<div class="card">
+<p>Дисплей SSD1306 128×32 пикселей в портретной ориентации отображает всю ключевую информацию:</p>
+
+<div class="display-diagram">
+<svg viewBox="0 0 64 256" width="96" height="384">
+  <!-- Background -->
+  <rect x="0" y="0" width="64" height="256" fill="#000"/>
+  
+  <!-- Mode Block (inverted) -->
+  <rect x="0" y="0" width="64" height="24" fill="#fff"/>
+  <text x="4" y="16" fill="#000" font-size="12" font-weight="bold">220°C</text>
+  
+  <!-- Current Temp -->
+  <text x="4" y="42" fill="#fff" font-size="10">185°C</text>
+  
+  <!-- PWM -->
+  <text x="4" y="64" fill="#fff" font-size="10">45%</text>
+  
+  <!-- Separator -->
+  <line x1="0" y1="80" x2="64" y2="80" stroke="#333" stroke-width="1"/>
+  
+  <!-- Cycle Counter -->
+  <rect x="4" y="96" width="24" height="24" fill="none" stroke="#fff" stroke-width="1"/>
+  <text x="16" y="112" text-anchor="middle" fill="#fff" font-size="10">42</text>
+  
+  <!-- WiFi Icon -->
+  <circle cx="52" cy="108" r="8" fill="none" stroke="#fff" stroke-width="1"/>
+  <circle cx="52" cy="112" r="3" fill="#fff"/>
+  
+  <!-- Timer -->
+  <text x="4" y="140" fill="#fff" font-size="10">02:35</text>
+  
+  <!-- Separator Line -->
+  <line x1="0" y1="176" x2="64" y2="176" stroke="#fff" stroke-width="2"/>
+  
+  <!-- Battery Percent -->
+  <text x="4" y="200" fill="#fff" font-size="10">85%</text>
+  
+  <!-- Battery Voltage -->
+  <text x="4" y="220" fill="#fff" font-size="10">7.8V</text>
+  
+  <!-- Battery Icon -->
+  <rect x="4" y="236" width="56" height="16" fill="none" stroke="#fff" stroke-width="2" rx="2"/>
+  <rect x="60" y="240" width="4" height="8" fill="#fff"/>
+  <rect x="6" y="238" width="42" height="12" fill="#fff"/>
+  
+  <!-- Labels -->
+  <text x="68" y="14" fill="#58a6ff" font-size="8">← Целевая темп.</text>
+  <text x="68" y="42" fill="#8b949e" font-size="8">← Текущая темп.</text>
+  <text x="68" y="64" fill="#8b949e" font-size="8">← PWM мощность</text>
+  <text x="68" y="108" fill="#8b949e" font-size="8">← Циклы / WiFi</text>
+  <text x="68" y="140" fill="#8b949e" font-size="8">← Таймер</text>
+  <text x="68" y="176" fill="#8b949e" font-size="8">← Индикатор сна</text>
+  <text x="68" y="210" fill="#8b949e" font-size="8">← Заряд АКБ</text>
+  <text x="68" y="248" fill="#8b949e" font-size="8">← Иконка АКБ</text>
+</svg>
+</div>
+
+<h3>Элементы дисплея</h3>
+<div class="param-row">
+  <span class="param-name">Целевая температура</span>
+  <span class="param-value">Инвертированный блок с текущим режимом</span>
+</div>
+<div class="param-row">
+  <span class="param-name">Текущая температура</span>
+  <span class="param-value">Значение с термопары в °C</span>
+</div>
+<div class="param-row">
+  <span class="param-name">PWM мощность</span>
+  <span class="param-value">OFF или 0–100%</span>
+</div>
+<div class="param-row">
+  <span class="param-name">Счётчик циклов</span>
+  <span class="param-value">Количество завершённых сессий нагрева</span>
+</div>
+<div class="param-row">
+  <span class="param-name">WiFi индикатор</span>
+  <span class="param-value">Точка внизу = клиент подключен</span>
+</div>
+<div class="param-row">
+  <span class="param-name">Таймер</span>
+  <span class="param-value">MM:SS с момента начала нагрева</span>
+</div>
+<div class="param-row">
+  <span class="param-name">Линия предупреждения</span>
+  <span class="param-value">Анимированно исчезает перед сном</span>
+</div>
+</div>
+
+<h2>LED индикация</h2>
+<div class="card">
+
+<div class="led-mode">
+  <div class="led-preview led-off"></div>
+  <div>
+    <div style="font-weight: 600;">LED OFF</div>
+    <div style="font-size: 0.9rem; color: var(--muted);">Светодиод выключен</div>
+  </div>
+</div>
+
+<div class="led-mode">
+  <div class="led-preview led-temp"></div>
+  <div>
+    <div style="font-weight: 600;">LED TEMP</div>
+    <div style="font-size: 0.9rem; color: var(--muted);">Цвет отражает температуру или PWM:<br>
+    Синий → Зелёный → Жёлтый → Оранжевый → Красный → Розовый<br>
+    В режиме MAX — пульсация красный/оранжевый</div>
+  </div>
+</div>
+
+<div class="led-mode">
+  <div class="led-preview led-flow"></div>
+  <div>
+    <div style="font-weight: 600;">LED FLOW</div>
+    <div style="font-size: 0.9rem; color: var(--muted);">Плавная радужная анимация с периодическими вспышками. Параметры настраиваются через Serial.</div>
+  </div>
+</div>
+
+<h3>Специальные состояния LED</h3>
+<div class="param-row">
+  <span class="param-name">Загрузка устройства</span>
+  <span class="param-value">Радужная анимация 1.7 сек</span>
+</div>
+<div class="param-row">
+  <span class="param-name">Вкладка Update активна</span>
+  <span class="param-value">Плавная пульсация синий ↔ фиолетовый</span>
+</div>
+<div class="param-row">
+  <span class="param-name">OTA обновление</span>
+  <span class="param-value">Мигание красный / синий</span>
+</div>
+<div class="param-row">
+  <span class="param-name">OTA успешно</span>
+  <span class="param-value">Фиолетовые вспышки → перезагрузка</span>
+</div>
+</div>
+
+<h2>WiFi и веб-интерфейс</h2>
+<div class="card">
+
+<h3>Подключение</h3>
+<div class="param-row">
+  <span class="param-name">Имя сети (SSID)</span>
+  <span class="param-value">Clean Heat</span>
+</div>
+<div class="param-row">
+  <span class="param-name">Пароль</span>
+  <span class="param-value">Отсутствует (открытая сеть)</span>
+</div>
+<div class="param-row">
+  <span class="param-name">Captive Portal</span>
+  <span class="param-value">Автоматическое перенаправление</span>
+</div>
+
+<h3>Функции веб-интерфейса</h3>
+<div class="feature-grid">
+  <div class="feature">
+    <div class="feature-title">Управление режимами</div>
+    <div class="feature-desc">Быстрые кнопки OFF / Mode 1 / Mode 2 / Mode 3 / MAX</div>
+  </div>
+  <div class="feature">
+    <div class="feature-title">Точная настройка температуры</div>
+    <div class="feature-desc">Кнопки ±1°C и ±5°C для пользовательской температуры</div>
+  </div>
+  <div class="feature">
+    <div class="feature-title">PWM управление</div>
+    <div class="feature-desc">Слайдер 0–100% для прямого управления мощностью</div>
+  </div>
+  <div class="feature">
+    <div class="feature-title">Сохранение режимов</div>
+    <div class="feature-desc">Запись текущей температуры в Mode 1/2/3</div>
+  </div>
+  <div class="feature">
+    <div class="feature-title">Управление таймером</div>
+    <div class="feature-desc">Пауза и сброс таймера сессии</div>
+  </div>
+  <div class="feature">
+    <div class="feature-title">Счётчик циклов</div>
+    <div class="feature-desc">Просмотр, коррекция (±1) и сброс счётчика</div>
+  </div>
+  <div class="feature">
+    <div class="feature-title">Мониторинг</div>
+    <div class="feature-desc">Температура, PWM, напряжение АКБ в реальном времени</div>
+  </div>
+  <div class="feature">
+    <div class="feature-title">OTA обновление</div>
+    <div class="feature-desc">Загрузка новой прошивки через браузер</div>
+  </div>
+  <div class="feature">
+    <div class="feature-title">Темы оформления</div>
+    <div class="feature-desc">Светлая и тёмная тема интерфейса</div>
+  </div>
+</div>
+</div>
+
+<h2>API эндпоинты</h2>
+<div class="card">
+
+<div class="api-endpoint">
+  <span><span class="api-method">GET</span> <span class="api-path">/status</span></span>
+  <span class="api-desc">JSON со всеми параметрами устройства</span>
+</div>
+
+<div class="api-endpoint">
+  <span><span class="api-method">GET</span> <span class="api-path">/set_temp?mode=0-4</span></span>
+  <span class="api-desc">Установка режима (0=OFF, 1-3=Mode, 4=MAX)</span>
+</div>
+
+<div class="api-endpoint">
+  <span><span class="api-method">GET</span> <span class="api-path">/adjust_temp?delta=±N</span></span>
+  <span class="api-desc">Изменение температуры на N градусов</span>
+</div>
+
+<div class="api-endpoint">
+  <span><span class="api-method">GET</span> <span class="api-path">/set_pwm?value=0-100</span></span>
+  <span class="api-desc">Установка PWM в процентах</span>
+</div>
+
+<div class="api-endpoint">
+  <span><span class="api-method">GET</span> <span class="api-path">/pwm_adjust?delta=±N</span></span>
+  <span class="api-desc">Изменение PWM на N процентов</span>
+</div>
+
+<div class="api-endpoint">
+  <span><span class="api-method">GET</span> <span class="api-path">/save_mode_temp?mode=1-3</span></span>
+  <span class="api-desc">Сохранение текущей температуры в режим</span>
+</div>
+
+<div class="api-endpoint">
+  <span><span class="api-method">GET</span> <span class="api-path">/timer_pause</span></span>
+  <span class="api-desc">Пауза/возобновление таймера</span>
+</div>
+
+<div class="api-endpoint">
+  <span><span class="api-method">GET</span> <span class="api-path">/timer_reset</span></span>
+  <span class="api-desc">Сброс таймера</span>
+</div>
+
+<div class="api-endpoint">
+  <span><span class="api-method">GET</span> <span class="api-path">/cycle_adjust?delta=±1</span></span>
+  <span class="api-desc">Изменение счётчика циклов</span>
+</div>
+
+<div class="api-endpoint">
+  <span><span class="api-method">GET</span> <span class="api-path">/cycle_reset</span></span>
+  <span class="api-desc">Сброс счётчика циклов</span>
+</div>
+
+<div class="api-endpoint">
+  <span><span class="api-method">GET</span> <span class="api-path">/set_led_mode?mode=0-2</span></span>
+  <span class="api-desc">Режим LED (0=OFF, 1=TEMP, 2=FLOW)</span>
+</div>
+
+<div class="api-endpoint">
+  <span><span class="api-method">GET</span> <span class="api-path">/toggle_led</span></span>
+  <span class="api-desc">Переключение LED вкл/выкл</span>
+</div>
+
+<div class="api-endpoint">
+  <span><span class="api-method">GET</span> <span class="api-path">/set_theme?dark=true|false</span></span>
+  <span class="api-desc">Установка темы интерфейса</span>
+</div>
+
+<div class="api-endpoint">
+  <span><span class="api-method">POST</span> <span class="api-path">/update</span></span>
+  <span class="api-desc">OTA загрузка прошивки (multipart/form-data)</span>
+</div>
+
+</div>
+
+<h2>Serial команды (LED Flow)</h2>
+<div class="card">
+<p>Настройка параметров режима LED FLOW через Serial Monitor (115200 baud):</p>
+
+<div class="serial-cmd">flow_settings</div>
+<p style="margin: 8px 0 16px; color: var(--muted); font-size: 0.9rem;">Показать текущие настройки</p>
+
+<div class="serial-cmd">flow_speed &lt;10-200&gt;</div>
+<p style="margin: 8px 0 16px; color: var(--muted); font-size: 0.9rem;">Скорость смены цвета радуги (по умолчанию: 50)</p>
+
+<div class="serial-cmd">flow_pulse_min &lt;3000-30000&gt;</div>
+<p style="margin: 8px 0 16px; color: var(--muted); font-size: 0.9rem;">Минимальный интервал между вспышками в мс (по умолчанию: 5000)</p>
+
+<div class="serial-cmd">flow_pulse_max &lt;5000-60000&gt;</div>
+<p style="margin: 8px 0 16px; color: var(--muted); font-size: 0.9rem;">Максимальный интервал между вспышками в мс (по умолчанию: 15000)</p>
+
+<div class="serial-cmd">flow_pulse_duration &lt;200-2000&gt;</div>
+<p style="margin: 8px 0 16px; color: var(--muted); font-size: 0.9rem;">Длительность одной вспышки в мс (по умолчанию: 800)</p>
+
+<div class="serial-cmd">flow_pulse_count &lt;1-10&gt;</div>
+<p style="margin: 8px 0 16px; color: var(--muted); font-size: 0.9rem;">Максимальное количество вспышек подряд (по умолчанию: 3)</p>
+
+<div class="serial-cmd">flow_help</div>
+<p style="margin: 8px 0 16px; color: var(--muted); font-size: 0.9rem;">Справка по командам</p>
+
+</div>
+
+<h2>Автоматические функции</h2>
+<div class="card">
+
+<h3>Auto Sleep</h3>
+<p>Устройство автоматически переходит в режим ожидания сна если:</p>
+<ul style="margin: 12px 0 20px 24px;">
+  <li>Нагрев выключен</li>
+  <li>Нет подключенных WiFi клиентов</li>
+  <li>Прошло 30 секунд без активности (или 120 сек если LED включен)</li>
+</ul>
+
+<h3>Счётчик циклов нагрева</h3>
+<p>Цикл засчитывается если:</p>
+<ul style="margin: 12px 0 20px 24px;">
+  <li>Нагрев был активен минимум 20 секунд</li>
+  <li>Начальная температура была ниже 80°C (исключает "продолжение")</li>
+</ul>
+
+<h3>PID-регулятор</h3>
+<div class="param-row">
+  <span class="param-name">Агрессивный режим (ошибка > 10°C)</span>
+  <span class="param-value">Kp=8.0, Ki=0.5, Kd=2.0</span>
+</div>
+<div class="param-row">
+  <span class="param-name">Консервативный режим (ошибка ≤ 10°C)</span>
+  <span class="param-value">Kp=3.0, Ki=0.2, Kd=1.0</span>
+</div>
+<div class="param-row">
+  <span class="param-name">Коррекция температуры</span>
+  <span class="param-value">+15°C к целевой (TEMP_CORRECTION)</span>
+</div>
+<div class="param-row">
+  <span class="param-name">Допуск стабильности</span>
+  <span class="param-value">±2°C (TEMP_TOLERANCE)</span>
+</div>
+
+</div>
+
+<h2>Технические параметры</h2>
+<div class="card">
+
+<h3>Питание</h3>
+<div class="param-row">
+  <span class="param-name">Напряжение АКБ</span>
+  <span class="param-value">6.0 – 8.4V (2S Li-ion)</span>
+</div>
+<div class="param-row">
+  <span class="param-name">Делитель напряжения</span>
+  <span class="param-value">×2.782</span>
+</div>
+
+<h3>Измерения</h3>
+<div class="param-row">
+  <span class="param-name">Обновление температуры</span>
+  <span class="param-value">Каждые 500 мс</span>
+</div>
+<div class="param-row">
+  <span class="param-name">Обновление напряжения</span>
+  <span class="param-value">Каждые 2000 мс (10 сэмплов)</span>
+</div>
+<div class="param-row">
+  <span class="param-name">Обновление PID</span>
+  <span class="param-value">Каждые 200 мс</span>
+</div>
+
+<h3>Управление</h3>
+<div class="param-row">
+  <span class="param-name">PWM частота</span>
+  <span class="param-value">1000 Hz</span>
+</div>
+<div class="param-row">
+  <span class="param-name">PWM разрешение</span>
+  <span class="param-value">8 бит (0-255)</span>
+</div>
+<div class="param-row">
+  <span class="param-name">Debounce кнопки</span>
+  <span class="param-value">50 мс</span>
+</div>
+<div class="param-row">
+  <span class="param-name">Долгое нажатие</span>
+  <span class="param-value">1000 мс</span>
+</div>
+<div class="param-row">
+  <span class="param-name">Таймаут двойного клика</span>
+  <span class="param-value">500 мс</span>
+</div>
+
+<h3>Sleep</h3>
+<div class="param-row">
+  <span class="param-name">Предупреждение перед сном</span>
+  <span class="param-value">5 секунд</span>
+</div>
+<div class="param-row">
+  <span class="param-name">Auto Sleep (LED выключен)</span>
+  <span class="param-value">30 секунд</span>
+</div>
+<div class="param-row">
+  <span class="param-name">Auto Sleep (LED включен)</span>
+  <span class="param-value">120 секунд</span>
+</div>
+
+</div>
+
+<div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.9rem;">
+  <p>Clean Heat Controller v1.0.63 • Руководство по функциям</p>
+</div>
+
+</body>
+</html>

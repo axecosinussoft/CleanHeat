@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clean Heat Controller — Инструкция по сборке</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --card: #161b22;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --success: #3fb950;
+  --warning: #d29922;
+  --danger: #f85149;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  padding: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+h1 { font-size: 2rem; margin-bottom: 8px; color: var(--accent); }
+h2 { font-size: 1.4rem; margin: 32px 0 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+h3 { font-size: 1.1rem; margin: 20px 0 12px; color: var(--success); }
+.subtitle { color: var(--muted); margin-bottom: 32px; }
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  margin: 16px 0;
+}
+.component-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
+}
+.component {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: var(--bg);
+  border-radius: 6px;
+}
+.component-icon {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+}
+.component-name { font-weight: 600; }
+.component-desc { font-size: 0.85rem; color: var(--muted); }
+.pinout-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+}
+.pinout-table th, .pinout-table td {
+  padding: 10px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.pinout-table th { color: var(--accent); font-weight: 600; }
+.pin-num { 
+  display: inline-block;
+  background: var(--accent);
+  color: var(--bg);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.diagram-container {
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+  overflow-x: auto;
+}
+.warning-box {
+  background: rgba(210, 153, 34, 0.1);
+  border-left: 4px solid var(--warning);
+  padding: 16px;
+  border-radius: 0 8px 8px 0;
+  margin: 16px 0;
+}
+.danger-box {
+  background: rgba(248, 81, 73, 0.1);
+  border-left: 4px solid var(--danger);
+  padding: 16px;
+  border-radius: 0 8px 8px 0;
+  margin: 16px 0;
+}
+.step {
+  display: flex;
+  gap: 16px;
+  margin: 20px 0;
+  padding: 16px;
+  background: var(--bg);
+  border-radius: 8px;
+}
+.step-num {
+  width: 32px;
+  height: 32px;
+  background: var(--accent);
+  color: var(--bg);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.step-content { flex: 1; }
+.wire { font-weight: 600; }
+.wire-red { color: #ff6b6b; }
+.wire-black { color: #adb5bd; }
+.wire-blue { color: #74c0fc; }
+.wire-green { color: #69db7c; }
+.wire-yellow { color: #ffd43b; }
+.wire-orange { color: #ff922b; }
+.wire-white { color: #f8f9fa; }
+svg text { font-family: inherit; }
+</style>
+</head>
+<body>
+
+<h1>Clean Heat Controller</h1>
+<p class="subtitle">Инструкция по сборке температурного контроллера на ESP32-C3</p>
+
+<h2>Необходимые компоненты</h2>
+<div class="card">
+<div class="component-list">
+  <div class="component">
+    <svg class="component-icon" viewBox="0 0 40 40">
+      <rect x="8" y="6" width="24" height="28" rx="2" fill="#1a5f2a" stroke="#3fb950" stroke-width="1.5"/>
+      <rect x="11" y="9" width="18" height="12" fill="#0d1117"/>
+      <circle cx="14" cy="14" r="1.5" fill="#58a6ff"/>
+      <line x1="4" y1="12" x2="8" y2="12" stroke="#ffd43b" stroke-width="2"/>
+      <line x1="4" y1="18" x2="8" y2="18" stroke="#ffd43b" stroke-width="2"/>
+      <line x1="4" y1="24" x2="8" y2="24" stroke="#ffd43b" stroke-width="2"/>
+      <line x1="32" y1="12" x2="36" y2="12" stroke="#ffd43b" stroke-width="2"/>
+      <line x1="32" y1="18" x2="36" y2="18" stroke="#ffd43b" stroke-width="2"/>
+      <line x1="32" y1="24" x2="36" y2="24" stroke="#ffd43b" stroke-width="2"/>
+    </svg>
+    <div>
+      <div class="component-name">ESP32-C3 SuperMini</div>
+      <div class="component-desc">Микроконтроллер с WiFi</div>
+    </div>
+  </div>
+  
+  <div class="component">
+    <svg class="component-icon" viewBox="0 0 40 40">
+      <rect x="10" y="8" width="20" height="24" rx="1" fill="#2d3748" stroke="#8b949e" stroke-width="1"/>
+      <rect x="12" y="10" width="16" height="10" fill="#0d1117"/>
+      <rect x="17" y="28" width="6" height="6" fill="#ffd43b"/>
+    </svg>
+    <div>
+      <div class="component-name">OLED SSD1306</div>
+      <div class="component-desc">Дисплей 128×32 px, I2C</div>
+    </div>
+  </div>
+  
+  <div class="component">
+    <svg class="component-icon" viewBox="0 0 40 40">
+      <rect x="8" y="12" width="24" height="16" rx="2" fill="#1a365d" stroke="#3182ce" stroke-width="1"/>
+      <line x1="4" y1="18" x2="8" y2="18" stroke="#ff6b6b" stroke-width="2"/>
+      <line x1="4" y1="22" x2="8" y2="22" stroke="#ffd43b" stroke-width="2"/>
+      <line x1="32" y1="20" x2="38" y2="12" stroke="#adb5bd" stroke-width="2"/>
+      <line x1="32" y1="20" x2="38" y2="20" stroke="#adb5bd" stroke-width="2"/>
+    </svg>
+    <div>
+      <div class="component-name">MAX6675</div>
+      <div class="component-desc">Усилитель термопары K-типа</div>
+    </div>
+  </div>
+  
+  <div class="component">
+    <svg class="component-icon" viewBox="0 0 40 40">
+      <line x1="20" y1="4" x2="20" y2="36" stroke="#ff922b" stroke-width="3"/>
+      <circle cx="20" cy="34" r="4" fill="#ff6b6b"/>
+      <rect x="17" y="8" width="6" height="20" fill="none" stroke="#8b949e" stroke-width="1"/>
+    </svg>
+    <div>
+      <div class="component-name">Термопара K-типа</div>
+      <div class="component-desc">Датчик температуры до 350°C</div>
+    </div>
+  </div>
+  
+  <div class="component">
+    <svg class="component-icon" viewBox="0 0 40 40">
+      <rect x="8" y="14" width="24" height="12" rx="2" fill="#2d3748" stroke="#8b949e" stroke-width="1"/>
+      <rect x="10" y="16" width="8" height="8" fill="#0d1117"/>
+      <line x1="4" y1="18" x2="8" y2="18" stroke="#ffd43b" stroke-width="2"/>
+      <line x1="4" y1="22" x2="8" y2="22" stroke="#ffd43b" stroke-width="2"/>
+      <line x1="32" y1="20" x2="36" y2="20" stroke="#ffd43b" stroke-width="2"/>
+    </svg>
+    <div>
+      <div class="component-name">MOSFET модуль</div>
+      <div class="component-desc">Управление нагревателем (AOD4184, IRLZ44N)</div>
+    </div>
+  </div>
+  
+  <div class="component">
+    <svg class="component-icon" viewBox="0 0 40 40">
+      <rect x="12" y="12" width="16" height="16" rx="8" fill="#3fb950"/>
+      <circle cx="20" cy="20" r="5" fill="#0d1117"/>
+    </svg>
+    <div>
+      <div class="component-name">WS2812B LED</div>
+      <div class="component-desc">Адресный RGB светодиод</div>
+    </div>
+  </div>
+  
+  <div class="component">
+    <svg class="component-icon" viewBox="0 0 40 40">
+      <circle cx="20" cy="20" r="10" fill="#4a5568" stroke="#8b949e" stroke-width="2"/>
+      <circle cx="20" cy="20" r="6" fill="#2d3748"/>
+    </svg>
+    <div>
+      <div class="component-name">Тактовая кнопка</div>
+      <div class="component-desc">Управление устройством</div>
+    </div>
+  </div>
+  
+  <div class="component">
+    <svg class="component-icon" viewBox="0 0 40 40">
+      <rect x="6" y="14" width="28" height="12" rx="2" fill="#3182ce" stroke="#63b3ed" stroke-width="1"/>
+      <rect x="34" y="17" width="3" height="6" fill="#63b3ed"/>
+      <rect x="9" y="17" width="6" height="6" fill="#1a365d"/>
+      <rect x="17" y="17" width="6" height="6" fill="#1a365d"/>
+      <rect x="25" y="17" width="6" height="6" fill="#1a365d"/>
+    </svg>
+    <div>
+      <div class="component-name">Li-ion аккумулятор 2S</div>
+      <div class="component-desc">7.4V (6.0–8.4V)</div>
+    </div>
+  </div>
+  
+  <div class="component">
+    <svg class="component-icon" viewBox="0 0 40 40">
+      <rect x="10" y="16" width="20" height="8" rx="1" fill="#553c9a" stroke="#9f7aea" stroke-width="1"/>
+      <text x="20" y="22" text-anchor="middle" font-size="6" fill="#e6edf3">10kΩ</text>
+    </svg>
+    <div>
+      <div class="component-name">Резисторы</div>
+      <div class="component-desc">Делитель напряжения для АКБ</div>
+    </div>
+  </div>
+  
+  <div class="component">
+    <svg class="component-icon" viewBox="0 0 40 40">
+      <path d="M8 28 L20 8 L32 28 Z" fill="none" stroke="#ff922b" stroke-width="2"/>
+      <line x1="20" y1="12" x2="20" y2="22" stroke="#ff922b" stroke-width="2"/>
+      <circle cx="20" cy="25" r="1" fill="#ff922b"/>
+    </svg>
+    <div>
+      <div class="component-name">Нихромовый нагреватель</div>
+      <div class="component-desc">Нагревательный элемент</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<h2>Распиновка ESP32-C3</h2>
+<div class="card">
+<table class="pinout-table">
+  <tr><th>Пин</th><th>Функция</th><th>Подключение</th></tr>
+  <tr><td><span class="pin-num">GPIO 0</span></td><td>MAX6675 DO</td><td>Данные термопары</td></tr>
+  <tr><td><span class="pin-num">GPIO 1</span></td><td>MAX6675 CS</td><td>Chip Select термопары</td></tr>
+  <tr><td><span class="pin-num">GPIO 2</span></td><td>MAX6675 CLK</td><td>Clock термопары</td></tr>
+  <tr><td><span class="pin-num">GPIO 3</span></td><td>ADC</td><td>Измерение напряжения АКБ</td></tr>
+  <tr><td><span class="pin-num">GPIO 4</span></td><td>PWM</td><td>Управление MOSFET (нагреватель)</td></tr>
+  <tr><td><span class="pin-num">GPIO 6</span></td><td>I2C SDA</td><td>Данные дисплея</td></tr>
+  <tr><td><span class="pin-num">GPIO 7</span></td><td>I2C SCL</td><td>Clock дисплея</td></tr>
+  <tr><td><span class="pin-num">GPIO 8</span></td><td>DATA</td><td>WS2812B LED</td></tr>
+  <tr><td><span class="pin-num">GPIO 9</span></td><td>INPUT_PULLUP</td><td>Кнопка (на GND)</td></tr>
+</table>
+</div>
+
+<h2>Схема подключения</h2>
+<div class="card">
+<div class="diagram-container">
+<svg viewBox="0 0 700 520" width="100%" style="min-width: 600px;">
+  <defs>
+    <marker id="arrowhead" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#8b949e"/>
+    </marker>
+  </defs>
+  
+  <!-- ESP32-C3 -->
+  <rect x="260" y="160" width="180" height="200" rx="8" fill="#1a5f2a" stroke="#3fb950" stroke-width="2"/>
+  <rect x="275" y="175" width="150" height="60" fill="#0d1117" rx="4"/>
+  <text x="350" y="210" text-anchor="middle" fill="#3fb950" font-size="14" font-weight="bold">ESP32-C3</text>
+  <text x="350" y="225" text-anchor="middle" fill="#8b949e" font-size="10">SuperMini</text>
+  <circle x="285" y="185" r="3" fill="#ff6b6b"/>
+  
+  <!-- ESP32 Pins Left -->
+  <text x="275" y="260" fill="#ffd43b" font-size="10">GPIO 0</text>
+  <text x="275" y="280" fill="#ffd43b" font-size="10">GPIO 1</text>
+  <text x="275" y="300" fill="#ffd43b" font-size="10">GPIO 2</text>
+  <text x="275" y="320" fill="#ffd43b" font-size="10">GPIO 3</text>
+  <text x="275" y="340" fill="#ffd43b" font-size="10">GPIO 4</text>
+  
+  <!-- ESP32 Pins Right -->
+  <text x="395" y="260" fill="#ffd43b" font-size="10">GPIO 6</text>
+  <text x="395" y="280" fill="#ffd43b" font-size="10">GPIO 7</text>
+  <text x="395" y="300" fill="#ffd43b" font-size="10">GPIO 8</text>
+  <text x="395" y="320" fill="#ffd43b" font-size="10">GPIO 9</text>
+  <text x="395" y="340" fill="#ffd43b" font-size="10">3.3V</text>
+  <text x="395" y="355" fill="#ffd43b" font-size="10">GND</text>
+  
+  <!-- MAX6675 Module -->
+  <rect x="40" y="200" width="120" height="100" rx="6" fill="#1a365d" stroke="#3182ce" stroke-width="2"/>
+  <text x="100" y="230" text-anchor="middle" fill="#63b3ed" font-size="12" font-weight="bold">MAX6675</text>
+  <text x="55" y="255" fill="#e6edf3" font-size="9">VCC</text>
+  <text x="55" y="270" fill="#e6edf3" font-size="9">GND</text>
+  <text x="55" y="285" fill="#e6edf3" font-size="9">DO</text>
+  <text x="130" y="255" fill="#e6edf3" font-size="9">CS</text>
+  <text x="130" y="270" fill="#e6edf3" font-size="9">CLK</text>
+  
+  <!-- MAX6675 Wires -->
+  <path d="M160 252 Q200 252 260 337" stroke="#ff6b6b" stroke-width="2" fill="none"/>
+  <path d="M160 267 Q190 267 230 355" stroke="#adb5bd" stroke-width="2" fill="none"/>
+  <path d="M160 282 L260 255" stroke="#69db7c" stroke-width="2" fill="none"/>
+  <path d="M75 255 L75 275" stroke="#74c0fc" stroke-width="2" fill="none"/>
+  <path d="M75 275 L260 275" stroke="#74c0fc" stroke-width="2" fill="none"/>
+  <path d="M90 270 L90 295" stroke="#ffd43b" stroke-width="2" fill="none"/>
+  <path d="M90 295 L260 295" stroke="#ffd43b" stroke-width="2" fill="none"/>
+  
+  <!-- Thermocouple -->
+  <line x1="100" y1="300" x2="100" y2="340" stroke="#ff922b" stroke-width="3"/>
+  <circle cx="100" cy="345" r="8" fill="#ff6b6b" stroke="#ff922b" stroke-width="2"/>
+  <text x="100" y="370" text-anchor="middle" fill="#8b949e" font-size="9">Термопара</text>
+  
+  <!-- OLED Display -->
+  <rect x="540" y="200" width="120" height="80" rx="6" fill="#2d3748" stroke="#8b949e" stroke-width="2"/>
+  <rect x="555" y="215" width="90" height="35" fill="#0d1117" rx="2"/>
+  <text x="600" y="275" text-anchor="middle" fill="#8b949e" font-size="10">SSD1306 128×32</text>
+  <text x="555" y="290" fill="#e6edf3" font-size="8">VCC GND SDA SCL</text>
+  
+  <!-- OLED Wires -->
+  <path d="M440 337 Q490 337 540 220" stroke="#ff6b6b" stroke-width="2" fill="none"/>
+  <path d="M440 352 Q480 352 540 235" stroke="#adb5bd" stroke-width="2" fill="none"/>
+  <path d="M440 255 Q490 255 555 250" stroke="#74c0fc" stroke-width="2" fill="none"/>
+  <path d="M440 275 Q500 275 585 250" stroke="#ffd43b" stroke-width="2" fill="none"/>
+  
+  <!-- WS2812B LED -->
+  <circle cx="600" cy="340" r="20" fill="#3fb950" stroke="#69db7c" stroke-width="2"/>
+  <circle cx="600" cy="340" r="8" fill="#0d1117"/>
+  <text x="600" y="375" text-anchor="middle" fill="#8b949e" font-size="9">WS2812B</text>
+  <text x="560" y="330" fill="#e6edf3" font-size="8">VCC</text>
+  <text x="560" y="345" fill="#e6edf3" font-size="8">DIN</text>
+  <text x="560" y="360" fill="#e6edf3" font-size="8">GND</text>
+  
+  <!-- LED Wires -->
+  <path d="M440 295 Q500 295 560 340" stroke="#69db7c" stroke-width="2" fill="none"/>
+  <path d="M555 325 Q520 325 500 337" stroke="#ff6b6b" stroke-width="2" fill="none"/>
+  <path d="M555 355 Q520 355 500 352" stroke="#adb5bd" stroke-width="2" fill="none"/>
+  
+  <!-- Button -->
+  <circle cx="600" cy="430" r="15" fill="#4a5568" stroke="#8b949e" stroke-width="2"/>
+  <circle cx="600" cy="430" r="8" fill="#2d3748"/>
+  <text x="600" y="460" text-anchor="middle" fill="#8b949e" font-size="9">Кнопка</text>
+  
+  <!-- Button Wires -->
+  <path d="M440 315 Q520 315 585 430" stroke="#9f7aea" stroke-width="2" fill="none"/>
+  <path d="M615 430 Q640 430 640 460 L500 460 L500 352" stroke="#adb5bd" stroke-width="2" fill="none"/>
+  
+  <!-- MOSFET Module -->
+  <rect x="40" y="400" width="140" height="80" rx="6" fill="#553c9a" stroke="#9f7aea" stroke-width="2"/>
+  <text x="110" y="430" text-anchor="middle" fill="#d6bcfa" font-size="12" font-weight="bold">MOSFET</text>
+  <text x="55" y="450" fill="#e6edf3" font-size="8">SIG</text>
+  <text x="55" y="465" fill="#e6edf3" font-size="8">VCC</text>
+  <text x="130" y="450" fill="#e6edf3" font-size="8">V+</text>
+  <text x="130" y="465" fill="#e6edf3" font-size="8">V-</text>
+  <text x="130" y="475" fill="#e6edf3" font-size="8">OUT+</text>
+  
+  <!-- MOSFET Wires -->
+  <path d="M260 335 Q200 335 70 445" stroke="#ff922b" stroke-width="2" fill="none"/>
+  
+  <!-- Heater -->
+  <path d="M200 430 Q210 420 220 430 Q230 440 240 430 Q250 420 260 430" stroke="#ff6b6b" stroke-width="3" fill="none"/>
+  <text x="230" y="455" text-anchor="middle" fill="#8b949e" font-size="9">Нагреватель</text>
+  
+  <!-- Heater Wires -->
+  <path d="M160 470 L200 435" stroke="#ff6b6b" stroke-width="2" fill="none"/>
+  <path d="M260 435 L300 435 L300 500" stroke="#adb5bd" stroke-width="2" fill="none"/>
+  
+  <!-- Battery Voltage Divider -->
+  <rect x="40" y="60" width="120" height="90" rx="6" fill="rgba(49, 130, 206, 0.2)" stroke="#3182ce" stroke-width="1" stroke-dasharray="4"/>
+  <text x="100" y="80" text-anchor="middle" fill="#63b3ed" font-size="10">Делитель напряжения</text>
+  <rect x="70" y="95" width="30" height="12" fill="#553c9a" stroke="#9f7aea" stroke-width="1"/>
+  <text x="85" y="104" text-anchor="middle" fill="#e6edf3" font-size="7">18k</text>
+  <rect x="100" y="95" width="30" height="12" fill="#553c9a" stroke="#9f7aea" stroke-width="1"/>
+  <text x="115" y="104" text-anchor="middle" fill="#e6edf3" font-size="7">10k</text>
+  <line x1="55" y1="101" x2="70" y2="101" stroke="#ff6b6b" stroke-width="2"/>
+  <line x1="130" y1="101" x2="145" y2="101" stroke="#adb5bd" stroke-width="2"/>
+  <text x="50" y="105" fill="#ff6b6b" font-size="8">V+</text>
+  <text x="148" y="105" fill="#adb5bd" font-size="8">GND</text>
+  
+  <!-- Divider to ESP -->
+  <line x1="100" y1="107" x2="100" y2="130" stroke="#69db7c" stroke-width="2"/>
+  <path d="M100 130 Q180 130 260 315" stroke="#69db7c" stroke-width="2" fill="none"/>
+  <text x="105" y="140" fill="#69db7c" font-size="8">GPIO3</text>
+  
+  <!-- Battery -->
+  <rect x="40" y="10" width="80" height="35" rx="4" fill="#3182ce" stroke="#63b3ed" stroke-width="2"/>
+  <rect x="120" y="18" width="6" height="18" fill="#63b3ed" rx="1"/>
+  <text x="80" y="32" text-anchor="middle" fill="#e6edf3" font-size="10" font-weight="bold">2S Li-ion</text>
+  <text x="80" y="55" text-anchor="middle" fill="#8b949e" font-size="9">7.4V</text>
+  
+  <!-- Power Lines Labels -->
+  <rect x="550" y="30" width="130" height="80" rx="6" fill="rgba(255, 255, 255, 0.05)" stroke="var(--border)" stroke-width="1"/>
+  <text x="615" y="50" text-anchor="middle" fill="#8b949e" font-size="10" font-weight="bold">Условные обозначения</text>
+  <line x1="560" y1="65" x2="580" y2="65" stroke="#ff6b6b" stroke-width="2"/>
+  <text x="585" y="68" fill="#e6edf3" font-size="9">VCC / V+</text>
+  <line x1="560" y1="80" x2="580" y2="80" stroke="#adb5bd" stroke-width="2"/>
+  <text x="585" y="83" fill="#e6edf3" font-size="9">GND</text>
+  <line x1="560" y1="95" x2="580" y2="95" stroke="#69db7c" stroke-width="2"/>
+  <text x="585" y="98" fill="#e6edf3" font-size="9">Сигнал / Данные</text>
+  
+</svg>
+</div>
+</div>
+
+<h2>Пошаговая сборка</h2>
+<div class="card">
+
+<h3>Этап 1: Подготовка питания</h3>
+
+<div class="danger-box">
+<strong>⚠ Внимание!</strong> При работе с литий-ионными аккумуляторами соблюдайте полярность. Короткое замыкание может привести к возгоранию.
+</div>
+
+<div class="step">
+  <div class="step-num">1</div>
+  <div class="step-content">
+    <strong>Делитель напряжения для мониторинга АКБ</strong><br>
+    Соберите делитель из резисторов <span class="wire wire-orange">18kΩ</span> и <span class="wire wire-orange">10kΩ</span>. 
+    Средняя точка подключается к <span class="wire wire-green">GPIO 3</span>.
+    Коэффициент деления: 2.8× (8.4V → 3.0V).
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-num">2</div>
+  <div class="step-content">
+    <strong>Подключение питания ESP32-C3</strong><br>
+    <span class="wire wire-red">V+</span> аккумулятора → VIN ESP32<br>
+    <span class="wire wire-black">GND</span> аккумулятора → GND ESP32
+  </div>
+</div>
+
+<h3>Этап 2: Подключение термопары</h3>
+
+<div class="step">
+  <div class="step-num">3</div>
+  <div class="step-content">
+    <strong>Модуль MAX6675</strong><br>
+    <span class="wire wire-red">VCC</span> → 3.3V ESP32<br>
+    <span class="wire wire-black">GND</span> → GND ESP32<br>
+    <span class="wire wire-green">DO</span> → <span class="wire wire-yellow">GPIO 0</span><br>
+    <span class="wire wire-blue">CS</span> → <span class="wire wire-yellow">GPIO 1</span><br>
+    <span class="wire wire-orange">CLK</span> → <span class="wire wire-yellow">GPIO 2</span>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-num">4</div>
+  <div class="step-content">
+    <strong>Термопара K-типа</strong><br>
+    Подключите термопару к клеммам модуля MAX6675. Соблюдайте полярность (+/−).
+  </div>
+</div>
+
+<h3>Этап 3: Дисплей и индикация</h3>
+
+<div class="step">
+  <div class="step-num">5</div>
+  <div class="step-content">
+    <strong>OLED дисплей SSD1306</strong><br>
+    <span class="wire wire-red">VCC</span> → 3.3V ESP32<br>
+    <span class="wire wire-black">GND</span> → GND ESP32<br>
+    <span class="wire wire-blue">SDA</span> → <span class="wire wire-yellow">GPIO 6</span><br>
+    <span class="wire wire-green">SCL</span> → <span class="wire wire-yellow">GPIO 7</span>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-num">6</div>
+  <div class="step-content">
+    <strong>WS2812B LED</strong><br>
+    <span class="wire wire-red">VCC</span> → 3.3V или 5V ESP32<br>
+    <span class="wire wire-black">GND</span> → GND ESP32<br>
+    <span class="wire wire-green">DIN</span> → <span class="wire wire-yellow">GPIO 8</span>
+  </div>
+</div>
+
+<h3>Этап 4: Управление</h3>
+
+<div class="step">
+  <div class="step-num">7</div>
+  <div class="step-content">
+    <strong>Кнопка управления</strong><br>
+    Один контакт → <span class="wire wire-yellow">GPIO 9</span><br>
+    Второй контакт → <span class="wire wire-black">GND</span><br>
+    <em>Внутренняя подтяжка (INPUT_PULLUP) активирована в прошивке</em>
+  </div>
+</div>
+
+<h3>Этап 5: Силовая часть</h3>
+
+<div class="warning-box">
+<strong>⚡ Осторожно!</strong> Нагреватель потребляет значительный ток. Используйте провода достаточного сечения и качественный MOSFET.
+</div>
+
+<div class="step">
+  <div class="step-num">8</div>
+  <div class="step-content">
+    <strong>MOSFET модуль</strong><br>
+    <span class="wire wire-green">SIG</span> → <span class="wire wire-yellow">GPIO 4</span><br>
+    <span class="wire wire-red">VCC</span> → 3.3V ESP32<br>
+    <span class="wire wire-red">V+</span> → V+ аккумулятора<br>
+    <span class="wire wire-black">V−</span> → GND аккумулятора
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-num">9</div>
+  <div class="step-content">
+    <strong>Нагревательный элемент</strong><br>
+    <span class="wire wire-red">OUT+</span> MOSFET → один контакт нагревателя<br>
+    Второй контакт нагревателя → <span class="wire wire-black">GND</span> (общий)
+  </div>
+</div>
+
+</div>
+
+<h2>Проверка перед первым запуском</h2>
+<div class="card">
+<div class="component-list">
+  <div class="component">
+    <svg class="component-icon" viewBox="0 0 40 40">
+      <circle cx="20" cy="20" r="14" fill="none" stroke="#3fb950" stroke-width="2"/>
+      <path d="M12 20 L18 26 L28 14" stroke="#3fb950" stroke-width="3" fill="none"/>
+    </svg>
+    <div>
+      <div class="component-name">Проверьте полярность</div>
+      <div class="component-desc">Все подключения питания VCC/GND</div>
+    </div>
+  </div>
+  
+  <div class="component">
+    <svg class="component-icon" viewBox="0 0 40 40">
+      <circle cx="20" cy="20" r="14" fill="none" stroke="#3fb950" stroke-width="2"/>
+      <path d="M12 20 L18 26 L28 14" stroke="#3fb950" stroke-width="3" fill="none"/>
+    </svg>
+    <div>
+      <div class="component-name">Проверьте соединения</div>
+      <div class="component-desc">Отсутствие КЗ между пинами</div>
+    </div>
+  </div>
+  
+  <div class="component">
+    <svg class="component-icon" viewBox="0 0 40 40">
+      <circle cx="20" cy="20" r="14" fill="none" stroke="#3fb950" stroke-width="2"/>
+      <path d="M12 20 L18 26 L28 14" stroke="#3fb950" stroke-width="3" fill="none"/>
+    </svg>
+    <div>
+      <div class="component-name">Измерьте напряжение</div>
+      <div class="component-desc">На делителе должно быть ≤3.3V</div>
+    </div>
+  </div>
+  
+  <div class="component">
+    <svg class="component-icon" viewBox="0 0 40 40">
+      <circle cx="20" cy="20" r="14" fill="none" stroke="#3fb950" stroke-width="2"/>
+      <path d="M12 20 L18 26 L28 14" stroke="#3fb950" stroke-width="3" fill="none"/>
+    </svg>
+    <div>
+      <div class="component-name">Термопара</div>
+      <div class="component-desc">Правильная полярность подключения</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<h2>Первый запуск</h2>
+<div class="card">
+<p>После подключения питания:</p>
+<ol style="margin: 16px 0; padding-left: 24px;">
+  <li style="margin: 8px 0;">LED загорится радужной анимацией (~1.7 сек)</li>
+  <li style="margin: 8px 0;">На дисплее появится "TEMP CONTROLLER / Initializing..."</li>
+  <li style="margin: 8px 0;">Устройство создаст WiFi точку доступа <strong>"Clean Heat"</strong></li>
+  <li style="margin: 8px 0;">Подключитесь к WiFi и откройте любой адрес в браузере</li>
+  <li style="margin: 8px 0;">Появится веб-интерфейс управления</li>
+</ol>
+</div>
+
+<div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.9rem;">
+  <p>Clean Heat Controller v1.0.63 • Документация по сборке</p>
+</div>
+
+</body>
+</html>
