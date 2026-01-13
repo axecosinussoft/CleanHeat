@@ -332,7 +332,7 @@ h1 { font-size: 1.5rem; margin-bottom: 8px; color: #58a6ff; }
             stroke="#69db7c" stroke-width="3" fill="none" stroke-linejoin="round"/>
   
   <!-- CS → GPIO 1: from (100,415) to (450,395) -->
-  <polyline points="100,415 70,415 70,260 390,260 390,395 450,395" 
+  <polyline points="100,415 70,415 70,270 340,270 340,395 450,395" 
             stroke="#74c0fc" stroke-width="3" fill="none" stroke-linejoin="round"/>
   
   <!-- CLK → GPIO 2: from (100,435) to (450,415) -->
@@ -365,8 +365,8 @@ h1 { font-size: 1.5rem; margin-bottom: 8px; color: #58a6ff; }
             stroke="#666" stroke-width="3" fill="none" stroke-linejoin="round"/>
 
   <!-- === WS2812B → ESP32 === -->
-  <!-- DIN → GPIO 8: from pin center (823,440) to (630,415) -->
-  <polyline points="820,440 700,440 700,415 630,415" 
+  <!-- DIN → GPIO 8: from pin center (823,440) to (630,415) (rerouted to avoid overlap with button line) -->
+  <polyline points="820,440 740,440 740,405 650,405 650,415 630,415" 
             stroke="#69db7c" stroke-width="3" fill="none" stroke-linejoin="round"/>
   
   <!-- LED VCC → 3V3 bus: from pin (820,420) to bus -->
@@ -387,8 +387,8 @@ h1 { font-size: 1.5rem; margin-bottom: 8px; color: #58a6ff; }
             stroke="#666" stroke-width="3" fill="none" stroke-linejoin="round"/>
 
   <!-- === MOSFET → ESP32 === -->
-  <!-- SIG → GPIO 4: from (100,675) to (450,455) -->
-  <polyline points="100,675 50,675 50,455 450,455" 
+  <!-- SIG → GPIO 4: from (100,675) to (450,455) (rerouted to avoid overlaps) -->
+  <polyline points="100,675 50,675 50,470 300,470 300,455 450,455" 
             stroke="#ff922b" stroke-width="3" fill="none" stroke-linejoin="round"/>
   
   <!-- MOSFET VCC → 3V3 bus: from (100,695) to bus -->
